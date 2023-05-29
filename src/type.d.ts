@@ -1,11 +1,11 @@
 export type DiamondCutAction = 0 | 1 | 2;
 
-export type FacetStructOutput = [string, string[]] & {
+export type FacetStructOutput = {
   target: string;
   selectors: string[];
 };
 
-export type Facets = {
+export type Facet = {
   target: string;
   action: DiamondCutAction;
   selectors: string[];

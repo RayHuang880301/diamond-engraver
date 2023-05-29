@@ -33,6 +33,44 @@ export const getExistingFacets = async (diamondAddr: string) => {
   return existingFacets;
 };
 
+export const getFnSelectorByFacetAddr = async (
+  diamondAddr: string,
+  facetAddr: string
+): Promise<string> => {
+  const diamondReadable = await ethers.getContractAt(
+    diamondReadableABI,
+    diamondAddr
+  );
+  let fnSelector;
+  try {
+    fnSelector = await diamondReadable.facetFunctionSelectors(facetAddr);
+  } catch (e: any) {
+    throw new Error(
+      `Error getting function selector from diamond contract: ${e.message}`
+    );
+  }
+  return fnSelector;
+};
+
+export const getFacetAddrByFnSelector = async (
+  diamondAddr: string,
+  fnSelector: string
+): Promise<string> => {
+  const diamondReadable = await ethers.getContractAt(
+    diamondReadableABI,
+    diamondAddr
+  );
+  let facetAddr;
+  try {
+    facetAddr = await diamondReadable.facetAddress(fnSelector);
+  } catch (e: any) {
+    throw new Error(
+      `Error getting facet address from diamond contract: ${e.message}`
+    );
+  }
+  return facetAddr;
+};
+
 export const safeFnSelectors = (
   targetSelectors: string[],
   existingFacet: FacetStructOutput

@@ -7,7 +7,7 @@ import {
 } from "../utils/utils";
 import { DIAMOND_CUT_ACTION } from "../config";
 
-export const facetAdd = async (
+export const safeAddFacet = async (
   signer: Signer,
   diamond: BaseContract,
   targetAddr: string,

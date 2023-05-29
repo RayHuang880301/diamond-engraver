@@ -7,8 +7,9 @@ import {
   safeFnSelectors,
 } from "../utils/utils";
 import { DIAMOND_CUT_ACTION } from "../config";
+import { Facet } from "../type";
 
-export const facetInit = async (
+export const safeInitFacet = async (
   signer: Signer,
   diamond: BaseContract,
   targetAddr: string,
@@ -17,13 +18,14 @@ export const facetInit = async (
   initData: string,
   onlyCall: boolean
 ) => {
-  let facets: { target: string; action: number; selectors: string[] }[] = [];
+  let facets: Facet[] = [];
+  let targetSelectors: string[] = [];
   if (!onlyCall) {
     const bytecode = await ethers.provider.getCode(targetAddr);
     if (bytecode === "0x") {
       throw new Error("Target address is not a contract");
     }
-    const targetSelectors = await getFnSelectors(targetFactory);
+    targetSelectors = await getFnSelectors(targetFactory);
     if (targetSelectors.length === 0) {
       throw new Error("No selectors found for target contract");
     }
@@ -51,4 +53,5 @@ export const facetInit = async (
     .diamondCut(facets, targetAddr, functionCall);
 
   await initTx.wait();
+  return targetSelectors;
 };

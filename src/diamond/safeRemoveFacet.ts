@@ -3,32 +3,18 @@ import { BaseContract, ContractFactory, Signer } from "ethers";
 import { getExistingFacets, getFnSelectors } from "../utils/utils";
 import { DIAMOND_CUT_ACTION } from "../config";
 
-export const facetReplace = async (
+export const RemoveFacet = async (
   signer: Signer,
   diamond: BaseContract,
-  targetAddr: string,
   targetFactory: ContractFactory
 ) => {
-  const bytecode = await ethers.provider.getCode(targetAddr);
-  if (bytecode === "0x") {
-    throw new Error("Target address is not a contract");
-  }
   const targetSelectors = await getFnSelectors(targetFactory);
   if (targetSelectors.length === 0) {
     throw new Error("No selectors found for target contract");
   }
 
+  // check remove facet is registered
   const existingFacets = await getExistingFacets(diamond.address);
-  // check target address not registered
-  for (const existingFacet of existingFacets) {
-    if (existingFacet.target === targetAddr) {
-      throw new Error(
-        `Cannot replace facet: ${targetAddr} is already registered`
-      );
-    }
-  }
-
-  // check replace facet is registered
   for (const targetSelector of targetSelectors) {
     let found = false;
     for (const existingFacet of existingFacets) {
@@ -39,7 +25,7 @@ export const facetReplace = async (
     }
     if (!found) {
       throw new Error(
-        `Cannot replace facet: ${targetSelector} is not registered`
+        `Cannot remove facet: ${targetSelector} is not registered`
       );
     }
   }
@@ -56,8 +42,8 @@ export const facetReplace = async (
 
   const facets = [
     {
-      target: targetAddr,
-      action: DIAMOND_CUT_ACTION.REPLACE,
+      target: ethers.constants.AddressZero,
+      action: DIAMOND_CUT_ACTION.REMOVE,
       selectors: targetSelectors,
     },
   ];
