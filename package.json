@@ -1,8 +1,8 @@
 {
   "name": "diamond-engraver",
   "version": "1.0.0",
-  "description": "",
-  "author": "",
+  "description": "A safe tool for diamond proxy upgradeable contract",
+  "author": "RayHuang <ray880301@gmail.com>",
   "license": "ISC",
   "main": "dist/index.js",
   "files": [
