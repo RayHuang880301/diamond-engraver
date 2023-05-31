@@ -2,11 +2,6 @@ import diamondReadableABI from "@solidstate/abi/DiamondReadable.json";
 import { Contract, ContractFactory, Signer, providers } from "ethers";
 import { FacetStructOutput } from "../type";
 
-export const useFacet = async (facetName: string, diamondAddr: string) => {
-  const facet = new Contract(facetName, diamondAddr);
-  return facet;
-};
-
 export const getExistingFacetAddresses = async (
   diamondAddr: string,
   signerOrProvider: Signer | providers.Provider
