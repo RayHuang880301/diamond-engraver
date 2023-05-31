@@ -8,7 +8,7 @@ import {
 import { getExistingFacets, getFnSelectors } from "../utils/utils";
 import { DIAMOND_CUT_ACTION } from "../config";
 
-export const RemoveFacet = async (
+export const safeRemoveFacet = async (
   signer: Signer,
   provider: providers.Provider,
   diamond: BaseContract,
