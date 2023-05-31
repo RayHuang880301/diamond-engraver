@@ -1,12 +1,15 @@
 import diamondReadableABI from "@solidstate/abi/DiamondReadable.json";
-import { Contract, ContractFactory } from "ethers";
-import { ethers } from "hardhat";
+import { Contract, ContractFactory, Signer, ethers, providers } from "ethers";
 import { FacetStructOutput } from "../type";
 
-export const getExistingFacetAddresses = async (diamondAddr: string) => {
-  const diamondReadable = await ethers.getContractAt(
+export const getExistingFacetAddresses = async (
+  diamondAddr: string,
+  signerOrProvider: Signer | providers.Provider
+) => {
+  const diamondReadable = new Contract(
+    diamondAddr,
     diamondReadableABI,
-    diamondAddr
+    signerOrProvider
   );
   let existingFacetAddresses;
   try {
@@ -19,10 +22,14 @@ export const getExistingFacetAddresses = async (diamondAddr: string) => {
   return existingFacetAddresses;
 };
 
-export const getExistingFacets = async (diamondAddr: string) => {
-  const diamondReadable = await ethers.getContractAt(
+export const getExistingFacets = async (
+  diamondAddr: string,
+  signerOrProvider: Signer | providers.Provider
+) => {
+  const diamondReadable = new Contract(
+    diamondAddr,
     diamondReadableABI,
-    diamondAddr
+    signerOrProvider
   );
   let existingFacets;
   try {
@@ -35,11 +42,13 @@ export const getExistingFacets = async (diamondAddr: string) => {
 
 export const getFnSelectorByFacetAddr = async (
   diamondAddr: string,
-  facetAddr: string
+  facetAddr: string,
+  signerOrProvider: Signer | providers.Provider
 ): Promise<string> => {
-  const diamondReadable = await ethers.getContractAt(
+  const diamondReadable = new Contract(
+    diamondAddr,
     diamondReadableABI,
-    diamondAddr
+    signerOrProvider
   );
   let fnSelector;
   try {
@@ -54,11 +63,13 @@ export const getFnSelectorByFacetAddr = async (
 
 export const getFacetAddrByFnSelector = async (
   diamondAddr: string,
+  signerOrProvider: Signer | providers.Provider,
   fnSelector: string
 ): Promise<string> => {
-  const diamondReadable = await ethers.getContractAt(
+  const diamondReadable = new Contract(
+    diamondAddr,
     diamondReadableABI,
-    diamondAddr
+    signerOrProvider
   );
   let facetAddr;
   try {

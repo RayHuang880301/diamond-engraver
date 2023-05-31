@@ -1,10 +1,16 @@
-import { ethers } from "hardhat";
-import { BaseContract, ContractFactory, Signer } from "ethers";
+import {
+  BaseContract,
+  ContractFactory,
+  Signer,
+  constants,
+  providers,
+} from "ethers";
 import { getExistingFacets, getFnSelectors } from "../utils/utils";
 import { DIAMOND_CUT_ACTION } from "../config";
 
 export const RemoveFacet = async (
   signer: Signer,
+  provider: providers.Provider,
   diamond: BaseContract,
   targetFactory: ContractFactory
 ) => {
@@ -14,7 +20,7 @@ export const RemoveFacet = async (
   }
 
   // check remove facet is registered
-  const existingFacets = await getExistingFacets(diamond.address);
+  const existingFacets = await getExistingFacets(diamond.address, provider);
   for (const targetSelector of targetSelectors) {
     let found = false;
     for (const existingFacet of existingFacets) {
@@ -42,7 +48,7 @@ export const RemoveFacet = async (
 
   const facets = [
     {
-      target: ethers.constants.AddressZero,
+      target: constants.AddressZero,
       action: DIAMOND_CUT_ACTION.REMOVE,
       selectors: targetSelectors,
     },
@@ -50,7 +56,7 @@ export const RemoveFacet = async (
 
   const tx = await diamond
     .connect(signer)
-    .diamondCut(facets, ethers.constants.AddressZero, "0x");
+    .diamondCut(facets, constants.AddressZero, "0x");
 
   await tx.wait();
   return targetSelectors;

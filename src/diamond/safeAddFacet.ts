@@ -1,5 +1,10 @@
-import { ethers } from "hardhat";
-import { BaseContract, ContractFactory, Signer } from "ethers";
+import {
+  BaseContract,
+  ContractFactory,
+  Signer,
+  constants,
+  providers,
+} from "ethers";
 import {
   getExistingFacets,
   getFnSelectors,
@@ -9,11 +14,12 @@ import { DIAMOND_CUT_ACTION } from "../config";
 
 export const safeAddFacet = async (
   signer: Signer,
+  provider: providers.Provider,
   diamond: BaseContract,
   targetAddr: string,
   targetFactory: ContractFactory
 ) => {
-  const bytecode = await ethers.provider.getCode(targetAddr);
+  const bytecode = await provider.getCode(targetAddr);
   if (bytecode === "0x") {
     throw new Error("Target address is not a contract");
   }
@@ -21,7 +27,7 @@ export const safeAddFacet = async (
   if (targetSelectors.length === 0) {
     throw new Error("No selectors found for target contract");
   }
-  const existingFacets = await getExistingFacets(diamond.address);
+  const existingFacets = await getExistingFacets(diamond.address, provider);
   for (const existingFacet of existingFacets) {
     safeFnSelectors(targetSelectors, existingFacet);
   }
@@ -34,7 +40,7 @@ export const safeAddFacet = async (
   ];
   const tx = await diamond
     .connect(signer)
-    .diamondCut(facets, ethers.constants.AddressZero, "0x");
+    .diamondCut(facets, constants.AddressZero, "0x");
 
   await tx.wait();
   return targetSelectors;
